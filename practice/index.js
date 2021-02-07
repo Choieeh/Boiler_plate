@@ -1,6 +1,14 @@
 const express = require('express')
 const app = express()
 const port = 5000
+const bodyParser = require('body-parser');
+const {User} = require("./models/User");
+
+//application url 형식
+app.use(bodyParser.urlencoded({extended:true}));
+//application json 형식 가져오기
+app.use(bodyParser.json());
+
 const mongoose = require('mongoose')
 mongoose.connect('mongodb+srv://Ehyun:asdf1234@cluster0.yqvbz.mongodb.net/Cluster0?retryWrites=true&w=majority', {
 	useNewUrlParser: true, useUnifiedTopology : true, useCreateIndex:true, useFindAndModify : false
@@ -10,6 +18,17 @@ mongoose.connect('mongodb+srv://Ehyun:asdf1234@cluster0.yqvbz.mongodb.net/Cluste
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
-app.post()
+app.post('/register', (req, res) => {
+	//회원가입할때 필요한 정보들을 client에서 가져오면 DB에 넣어준다.
+	
+	const user = new User(req.body)
+	//doc 에는 방금저장한 userinfo가 들어가 있음.
+	user.save((err, doc) => {
+		if(err) return res.json({success:false, err})
+		return res.status(200).json({
+			success: true
+		})
+	})
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

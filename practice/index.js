@@ -10,4 +10,6 @@ mongoose.connect('mongodb+srv://Ehyun:asdf1234@cluster0.yqvbz.mongodb.net/Cluste
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
+app.post()
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

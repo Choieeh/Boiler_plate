@@ -3,6 +3,7 @@ const app = express()
 const port = 5000
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const {auth} = require("./middleware/auth");
 const {User} = require("./models/User");
 
 const config = require('./config/key')
@@ -24,7 +25,7 @@ mongoose.connect(config.mongoURI, {
 
 app.get('/', (req, res) => res.send('Hello World!'))
 
-app.post('/register', (req, res) => {
+app.post('/api/user/register', (req, res) => {
 	//회원가입할때 필요한 정보들을 client에서 가져오면 DB에 넣어준다.
 	
 	const user = new User(req.body)
@@ -37,7 +38,7 @@ app.post('/register', (req, res) => {
 	})
 })
 
-app.post('/login', (req, res) => {
+app.post('/api/user/login', (req, res) => {
 	//요청된 email을 DB에서 있는지 찾는다.
 	User.findOne({email : req.body.email }, (err, user) => {
 		if(!user) {
@@ -61,5 +62,32 @@ app.post('/login', (req, res) => {
 	//요청된 email이 DB에 있다면 비밀번호 확인.
 	//비밀번호 까지 맞으면 토큰 생성.
 })
+
+app.get('/api/user/auth', auth, (req, res) => {
+	//가운데 auth는 midware
+	//여기까지 minddleware를 통과해 왔다는 것은 auth가 True라는 말.
+	res.status(200).json({
+		//client에 전달해주는 것
+		_id : req.user._id,
+		isAdmin : req.user.role === 0 ? false : true,
+		isAuth : true,
+		email : req.user.email,
+		name : req.user.name,
+		lastname : req.user.lastname,
+		role : req.user.role,
+		image : req.user.image
+	})
+})
+
+app.get('/api/users/logout', auth, (req, res) => {
+	User.findOneAndUpdate({_id: req.user._id}, {token : ""}, 
+	(err, user) => {
+		if(err) return res.json({success:false, err});
+		return res.status(200).send({
+			success: true
+		})
+	})
+})
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

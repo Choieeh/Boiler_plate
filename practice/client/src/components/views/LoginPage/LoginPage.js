@@ -9,7 +9,7 @@ function LoginPage(props) {
 	
 	const [Email, setEmail] = useState("")
 	const [Password, setPassword] = useState("")
-	
+	//state의 초기값과 해당변수를 갱신할 수 있는 함수
 	const onEmailHandler = (event) => {
 		setEmail(event.currentTarget.value)
 	}

@@ -27,12 +27,12 @@ export function registerUser(dataTosubmit) {
 	
 }
 
-export function authUser() {
+export function auth() {
 	const request = axios.get('/api/user/auth')
 	.then(response => response.data)
 	
 	return {
-		type : REGISTER_USER,
+		type : AUTH_USER,
 		payload: request
 	}
 	
